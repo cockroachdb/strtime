@@ -60,7 +60,7 @@
 #include "timelocal.h"
 // #include "tzfile.h"
 
-static char * _strptime(const char *, const char *, struct mytm *, int *, locale_t);
+static char * _strptime(const char *, const char *, struct mytm *, int *);
 
 #define	asizeof(a)	(sizeof(a) / sizeof((a)[0]))
 
@@ -86,8 +86,7 @@ first_wday_of(int year)
 }
 
 static char *
-_strptime(const char *buf, const char *fmt, struct mytm *tm, int *GMTp,
-		locale_t locale)
+_strptime(const char *buf, const char *fmt, struct mytm *tm, int *GMTp)
 {
 	char	c;
 	const char *ptr;
@@ -96,6 +95,7 @@ _strptime(const char *buf, const char *fmt, struct mytm *tm, int *GMTp,
 	int	i, len;
 	int flags;
 	int Ealternative, Oalternative;
+	const int locale = 0;
 	const struct lc_time_T *tptr = __get_current_time_locale(locale);
 	static int start_of_month[2][13] = {
 		{0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365},
@@ -129,7 +129,7 @@ label:
 			break;
 
 		case '+':
-			buf = _strptime(buf, tptr->date_fmt, tm, GMTp, locale);
+			buf = _strptime(buf, tptr->date_fmt, tm, GMTp);
 			if (buf == NULL)
 				return (NULL);
 			flags |= FLAG_WDAY | FLAG_MONTH | FLAG_MDAY | FLAG_YEAR;
@@ -156,14 +156,14 @@ label:
 			break;
 
 		case 'c':
-			buf = _strptime(buf, tptr->c_fmt, tm, GMTp, locale);
+			buf = _strptime(buf, tptr->c_fmt, tm, GMTp);
 			if (buf == NULL)
 				return (NULL);
 			flags |= FLAG_WDAY | FLAG_MONTH | FLAG_MDAY | FLAG_YEAR;
 			break;
 
 		case 'D':
-			buf = _strptime(buf, "%m/%d/%y", tm, GMTp, locale);
+			buf = _strptime(buf, "%m/%d/%y", tm, GMTp);
 			if (buf == NULL)
 				return (NULL);
 			flags |= FLAG_MONTH | FLAG_MDAY | FLAG_YEAR;
@@ -186,38 +186,38 @@ label:
 			goto label;
 
 		case 'F':
-			buf = _strptime(buf, "%Y-%m-%d", tm, GMTp, locale);
+			buf = _strptime(buf, "%Y-%m-%d", tm, GMTp);
 			if (buf == NULL)
 				return (NULL);
 			flags |= FLAG_MONTH | FLAG_MDAY | FLAG_YEAR;
 			break;
 
 		case 'R':
-			buf = _strptime(buf, "%H:%M", tm, GMTp, locale);
+			buf = _strptime(buf, "%H:%M", tm, GMTp);
 			if (buf == NULL)
 				return (NULL);
 			break;
 
 		case 'r':
-			buf = _strptime(buf, tptr->ampm_fmt, tm, GMTp, locale);
+			buf = _strptime(buf, tptr->ampm_fmt, tm, GMTp);
 			if (buf == NULL)
 				return (NULL);
 			break;
 
 		case 'T':
-			buf = _strptime(buf, "%H:%M:%S", tm, GMTp, locale);
+			buf = _strptime(buf, "%H:%M:%S", tm, GMTp);
 			if (buf == NULL)
 				return (NULL);
 			break;
 
 		case 'X':
-			buf = _strptime(buf, tptr->X_fmt, tm, GMTp, locale);
+			buf = _strptime(buf, tptr->X_fmt, tm, GMTp);
 			if (buf == NULL)
 				return (NULL);
 			break;
 
 		case 'x':
-			buf = _strptime(buf, tptr->x_fmt, tm, GMTp, locale);
+			buf = _strptime(buf, tptr->x_fmt, tm, GMTp);
 			if (buf == NULL)
 				return (NULL);
 			flags |= FLAG_MONTH | FLAG_MDAY | FLAG_YEAR;
@@ -737,5 +737,5 @@ label:
 int bsd_strptime(const char *s, const char *format, struct mytm *tm)
 {
     int unused = 0;
-    return 0 != _strptime(s, format, tm, &unused, 0);
+    return 0 != _strptime(s, format, tm, &unused);
 }
