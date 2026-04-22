@@ -115,3 +115,43 @@ func TestTimeConversion(t *testing.T) {
 		}
 	}
 }
+
+func TestStrftimeYearFormat(t *testing.T) {
+	tests := []struct {
+		year      int
+		yFormat   string // %Y
+		yLowerFmt string // %y
+		cyFormat  string // %C%y
+	}{
+		{1, "0001", "01", "0001"},
+		{99, "0099", "99", "0099"},
+		{999, "0999", "99", "0999"},
+		{2024, "2024", "24", "2024"},
+		{10001, "10001", "01", "10001"},
+	}
+
+	for _, test := range tests {
+		tm := time.Date(test.year, 1, 1, 0, 0, 0, 0, time.UTC)
+
+		got, err := Strftime(tm, "%Y")
+		if err != nil {
+			t.Errorf("strftime(year=%d, %%Y): %v", test.year, err)
+		} else if got != test.yFormat {
+			t.Errorf("strftime(year=%d, %%Y): got %q, expected %q", test.year, got, test.yFormat)
+		}
+
+		got, err = Strftime(tm, "%y")
+		if err != nil {
+			t.Errorf("strftime(year=%d, %%y): %v", test.year, err)
+		} else if got != test.yLowerFmt {
+			t.Errorf("strftime(year=%d, %%y): got %q, expected %q", test.year, got, test.yLowerFmt)
+		}
+
+		got, err = Strftime(tm, "%C%y")
+		if err != nil {
+			t.Errorf("strftime(year=%d, %%C%%y): %v", test.year, err)
+		} else if got != test.cyFormat {
+			t.Errorf("strftime(year=%d, %%C%%y): got %q, expected %q", test.year, got, test.cyFormat)
+		}
+	}
+}
