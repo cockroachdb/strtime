@@ -5,8 +5,6 @@
 #include <string.h>
 #include <time.h>
 
-#define locale_t int
-
 #ifdef isspace_l
 #undef isspace_l
 #endif
