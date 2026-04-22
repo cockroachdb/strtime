@@ -196,7 +196,7 @@ func Strftime(t time.Time, f string) (string, error) {
 				case 'y':
 					add(fmt.Sprintf("%02d", t.Year()%100))
 				case 'Y':
-					add(fmt.Sprintf("%02d", t.Year()))
+					add(fmt.Sprintf("%04d", t.Year()))
 				case 'z':
 					add(t.Format("-0700"))
 				case 'Z':
